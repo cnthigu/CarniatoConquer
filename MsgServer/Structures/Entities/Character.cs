@@ -49,7 +49,7 @@ namespace MsgServer.Structures.Entities
         private TimeOut m_tDoGhost = new TimeOut(3);
         private TimeOut m_tTransformation = new TimeOut(0);
         private TimeOutMS m_tMine = new TimeOutMS(3000);
-        private TimeOut m_tOnlineTime = new TimeOut(1800);
+        private TimeOut m_OnlinePointes = new TimeOut(300);
         private TimeOut m_tTeamPos = new TimeOut(TIME_TEAMPRC);
         private TimeOut m_tHeavenBlessing = new TimeOut(60);
         private TimeOut m_tLuckyTime = new TimeOut(1);
@@ -247,6 +247,9 @@ namespace MsgServer.Structures.Entities
         }
         public string TemporaryString;
 
+        public Client Client => m_pOwner;
+        public DbUser DbUser => m_dbUser;
+
         public Character(MsgUserInfo pMsg, DbUser dbUser, Client pClient)
         {
             m_pOwner = pClient;
@@ -310,7 +313,7 @@ namespace MsgServer.Structures.Entities
             m_tDoGhost.Clear();
             m_tRevive.Clear();
             m_tMine.Clear();
-            m_tOnlineTime.Startup(1800);
+            m_OnlinePointes.Startup(300);
             m_tHeavenBlessing.Update();
             m_tTeamPos.Update();
             m_tLuckyTime.Update();
@@ -416,7 +419,35 @@ namespace MsgServer.Structures.Entities
         {
             get { return m_pMagics ?? (m_pMagics = new MagicData(this)); }
         }
-
+        public bool ReduziOnlinePoints(int amount)
+        {
+            if (m_dbUser.OnlinePoints >= amount)
+            {
+                m_dbUser.OnlinePoints -= amount;
+                Save(); 
+                return true;
+            }
+            return false;
+        }
+        public byte VipLevel
+        {
+            get => m_pOwner.VipLevel;
+            set
+            {
+                m_pOwner.VipLevel = value;
+                var account = new AccountRepository().SearchByIdentity(m_pOwner.AccountIdentity);
+                if (account != null)
+                {
+                    account.Vip = value;
+                    new AccountRepository().SaveOrUpdate(account);
+                    Console.WriteLine($"VIP atualizado para {value} na conta {m_pOwner.AccountIdentity}");
+                }
+                else
+                {
+                    Console.WriteLine($"Erro: Conta {m_pOwner.AccountIdentity} não encontrada");
+                }
+            }
+        }
         public Transformation QueryTransformation
         {
             get { return m_pTransformation; }
@@ -8293,20 +8324,22 @@ namespace MsgServer.Structures.Entities
                 Console.WriteLine("ERROR RESTORE VIGOR");
             }
 
-            try
+            if (m_OnlinePointes.ToNextTime())
             {
-                if (m_tOnlineTime.ToNextTime())
+                Console.WriteLine($"Antes: {m_dbUser.OnlinePoints}");
+                if (m_dbUser.MapId == 1002)
                 {
-                    AwardEmoney(100, false);
-                    AwardMoney(50000, false);
-                    AwardStudyPoints(200, false);
-                    Send("You received 100 CPs, 50,000 silvers and 200 Study Points for staying 30 minutes online.",
-                        ChatTone.TALK);
+                    m_dbUser.OnlinePoints += 5; // 5 pontos em Twin City
+                    Send("You received 5 Online Points for staying 5 minutes in Twin City.", ChatTone.TALK);
                 }
-            }
-            catch
-            {
-                Console.WriteLine("ERROR AUTO REWARD");
+                else
+                {
+                    m_dbUser.OnlinePoints += 3; // 3 pontos em outras cidades
+                    Send("You received 3 Online Points for staying 5 minutes online.", ChatTone.TALK);
+                }
+
+                Console.WriteLine($"Depois: {m_dbUser.OnlinePoints}");
+                Save();
             }
         }
         #endregion

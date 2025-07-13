@@ -3,6 +3,8 @@
     public class DbUser
     {
         public virtual uint Identity { get; set; } // Unique ID
+
+        public virtual int OnlinePoints { get; set; } // OnlinePoints
         public virtual uint AccountId { get; set; } // Account ID
         public virtual string Name { get; set; } // Character name
         public virtual string Mate { get; set; } // Character mate

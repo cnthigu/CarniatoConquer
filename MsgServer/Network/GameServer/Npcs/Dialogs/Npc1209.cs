@@ -1,5 +1,7 @@
-﻿using MsgServer.Structures.Entities;
+﻿using DB.Entities;
+using MsgServer.Structures.Entities;
 using ServerCore.Networking.Packets;
+using System;
 
 namespace MsgServer.Network.GameServer.Npcs.Dialogs
 {
@@ -14,86 +16,53 @@ namespace MsgServer.Network.GameServer.Npcs.Dialogs
 
             switch (controlId)
             {
-                case 0:
-                    dialog.AddText("testes to FoxConquer! This is a beta server when it is no longer beta you will continue to keep all the inventory and the level. Enjoy this server and report any bug you find :) ");
-                    dialog.AddText("You receive 100 CPs, 50,000 silvers and 200 Study Points for staying 30 minutes online! ");
-                    dialog.AddText("Can buy some required items for promotion here only talk me.");
-                    dialog.AddOption("Buy Promotion Items", 1);
-                    dialog.AddOption("Thanks", 255);
+                case 0: 
+                    dialog.AddText($"Ola, bem-vindo ao ConquerTANANA!\nSeu nivel VIP e: {user.VipLevel}.");
+                    dialog.AddText($"\nVoce tem {user.DbUser.OnlinePoints} Online Points.");
+                    dialog.AddText($"\nVoce ganha {(user.DbUser.MapId == 1002 ? 5 : 3)} Online Points a cada 5 minutos logado{(user.DbUser.MapId == 1002 ? " em Twin City" : " fora de Twin City")}.");
+                    dialog.AddText("\nUse Online Points para subir seu nivel VIP!");
+                    dialog.AddOption("Subir nivel VIP", 1);
+                    dialog.AddOption("Nao, obrigado", 255);
                     dialog.Show();
                     break;
 
                 case 1:
-                    dialog.AddText("Have this items for promotion you can buy.");
-                    dialog.AddOption("Buy Emerald [250 CPs]", 2);
-                    dialog.AddOption("Buy MoonBox [500 CPs]", 3);
-                    dialog.AddOption("Buy 20 EuxeniteOre [2000 CPs]", 4);
-                    dialog.AddOption("No thanks", 255);
-                    dialog.Show();
-                    break;
-
-                case 2: // Emerald
-                    if (user.ReduceEmoney(250))
+                    if (user.VipLevel >= 6)
                     {
-                        if (user.Inventory.Create(1080001))
-                        {
-                            dialog.AddText("Here is your item!");
-                            dialog.AddOption("Thanks", 255);
-                        }
-                        else
-                        {
-                            dialog.AddText("Not have space in your inventory");
-                            dialog.AddOption("Ok", 255);
-                        }
+                        dialog.AddText("Voce ja atingiu o nivel VIP maximo (VIP 6)!");
+                        dialog.AddOption("Ok", 255);
                     }
                     else
                     {
-                        dialog.AddText("You not have 250 CPs.");
-                        dialog.AddOption("Oh sorry", 255);
+                        int cost = (user.VipLevel + 1) * 1000; 
+                        dialog.AddText($"Para subir para VIP {user.VipLevel + 1}, voce precisa de {cost} Online Points.");
+                        dialog.AddOption($"Confirmar (VIP {user.VipLevel + 1})", 2);
+                        dialog.AddOption("Nao, obrigado", 255);
                     }
                     dialog.Show();
                     break;
 
-                case 3: // MoonBox
-                    if (user.ReduceEmoney(500))
+                case 2:
+                    if (user.VipLevel >= 6)
                     {
-                        if (user.Inventory.Create(721080))
-                        {
-                            dialog.AddText("Here is your item!");
-                            dialog.AddOption("Thanks", 255);
-                        }
-                        else
-                        {
-                            dialog.AddText("Not have space in your inventory");
-                            dialog.AddOption("Ok", 255);
-                        }
+                        dialog.AddText("Voce ja atingiu o nivel VIP maximo (VIP 6)!");
+                        dialog.AddOption("Ok", 255);
                     }
                     else
                     {
-                        dialog.AddText("You not have 500 CPs.");
-                        dialog.AddOption("Oh sorry", 255);
-                    }
-                    dialog.Show();
-                    break;
-
-                case 4: // EuxeniteOre
-                    if (user.ReduceEmoney(2000))
-                    {
-                        if (user.Inventory.Create(1072031, 20)) // Supondo que Create aceite quantidade
+                        int cost = (user.VipLevel + 1) * 1000;
+                        if (user.ReduziOnlinePoints(cost))
                         {
-                            dialog.AddText("Here is your items!");
-                            dialog.AddOption("Thanks", 255);
+                            user.VipLevel += 1; 
+                            dialog.AddText($"Parabens! Voce agora e VIP {user.VipLevel}!");
+                            dialog.AddOption("Obrigado", 255);
+                            Console.WriteLine($"Jogador {user.Name} subiu para VIP {user.VipLevel}.");
                         }
                         else
                         {
-                            dialog.AddText("Not have space in your inventory");
-                            dialog.AddOption("Ok", 255);
+                            dialog.AddText($"Voce nao tem {cost} Online Points para subir para VIP {user.VipLevel + 1}.");
+                            dialog.AddOption("Desculpe-me", 255);
                         }
-                    }
-                    else
-                    {
-                        dialog.AddText("You not have 2000 CPs.");
-                        dialog.AddOption("Oh sorry", 255);
                     }
                     dialog.Show();
                     break;

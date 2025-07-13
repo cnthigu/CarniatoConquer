@@ -74,6 +74,7 @@ namespace DB.Mappings
             Map(x => x.ChkSum).Column("chk_sum").Default("0").Not.Nullable();
             Map(x => x.ExpBallUsage).Column("exp_ball_usage").Default("0").Not.Nullable();
             Map(x => x.LastUpdate).Column("last_daily_update").Default("0").Not.Nullable();
+            Map(x => x.OnlinePoints).Column("OnlinePoints").Default("0").Not.Nullable();
         }
     }
 }
