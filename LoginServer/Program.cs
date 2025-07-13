@@ -57,17 +57,11 @@ namespace LoginServer
 
             // file handling
 
-            Console.Title = "[FoxConquer Project] Login Server";
+            Console.Title = "[Carniato Conquer] Login Server";
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\tFoxConquer Project: Conquer Online Private Server Emulator. 5517 Client Version.");
-            Console.WriteLine("\t\tProject created by Felipe Vieira (FTW! Masters) and maintained by DaRkFoxDeveloper");
-            Console.WriteLine("\t\tMay 01th, 2020 - All Rights Reserved\n");
+            Console.WriteLine("\tCarniato Conquer: Emulador de Servidor Privado de Conquer Online. Versão do Cliente 5517.");
+            Console.WriteLine("\t\tProjeto criado por Felipe Vieira (FTW! Masters) e mantido por Carniato");
             // Output the description of the server
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("The account server is designed to accept login data from the client and to\n"
-                + "verify that the username and password combination inputted is correct with the\n"
-                + "database. If the combination is correct, the client will be transferred to the\n"
-                + "message server of their choice. Please wait for the database to be initialized.\n");
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.White;
 
@@ -156,7 +150,7 @@ namespace LoginServer
         {
             ServerKernel.Log.SaveLog(false, new string('=', Console.WindowWidth), _LOGIN_ANALYTIC_LOG);
             ServerKernel.Log.SaveLog(false,
-                string.Format("=== Conquer Online Login Server - {0} - {1}", "FoxConquer Project",
+                string.Format("=== Conquer Online Login Server - {0} - {1}", "Carniato Conquer",
                     DateTime.Now.ToString("MMM yy dd hh:mm:ss")), _LOGIN_ANALYTIC_LOG);
             ServerKernel.Log.SaveLog(false,
                 string.Format("=== Start Server time is {0}",
@@ -403,7 +397,7 @@ namespace LoginServer
         public static void UpdateWindowTitle()
         {
             var now = DateTime.Now;
-            Console.Title = string.Format("[{0}] FoxConquer Project. LoginServer - {4:00}/{5:00}/{6:00} {1:00}:{2:00}:{3:00} - Online: {7}",
+            Console.Title = string.Format("[{0}] Carniato Conquer. LoginServer - {4:00}/{5:00}/{6:00} {1:00}:{2:00}:{3:00} - Online: {7}",
                 ServerKernel.ServerName, now.Hour, now.Minute, now.Second,
                 now.Month, now.Day, now.Year, OnlineCount());
         }

@@ -68,16 +68,14 @@ namespace MsgServer
 
             ServerKernel.Log = new LogWriter(Environment.CurrentDirectory);
 
-            Console.Title = "Starting server...";
+            Console.Title = "Start Server...";
 
             // Server header
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\tFoxConquer Project: Conquer Online Private Server Emulator. 5517 Client Version.");
-            Console.WriteLine("\t\tProject created by Felipe Vieira (FTW! Masters) and maintained by DaRkFoxDeveloper");
-            Console.WriteLine("\t\tMay 01th, 2020 - All Rights Reserved");
+            Console.WriteLine("\tCarniato Conquer: Emulador de Servidor Privado do Conquer Online. Versão do Cliente 5517.");
+            Console.WriteLine("\t\tProjeto criado por Felipe Vieira (FTW! Masters) e mantido por Carniato");
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.White;
-
             ServerKernel.Log.SaveLog("Computer Name: " + Environment.MachineName, true, LogType.DEBUG);
             ServerKernel.Log.SaveLog("User Name: " + Environment.UserName, true, LogType.DEBUG);
             ServerKernel.Log.SaveLog("System Directory: " + Environment.SystemDirectory, true, LogType.DEBUG);
@@ -337,7 +335,7 @@ namespace MsgServer
         public static void UpdateTitle()
         {
             DateTime now = DateTime.Now;
-            Console.Title = string.Format("[{0}] FoxConquer Project. GameServer - Server Time: {1:0000}/{2:00}/{3:00} {4:00}:{5:00} - Online/Max: {6}/{7}",
+            Console.Title = string.Format("[{0}] Carniato Conquer. GameServer - Server Time: {1:0000}/{2:00}/{3:00} {4:00}:{5:00} - Online/Max: {6}/{7}",
                 ServerKernel.ServerName, now.Year, now.Month, now.Day, now.Hour, now.Minute, ServerKernel.Players.Count,
                 ServerKernel.OnlineRecord);
         }
